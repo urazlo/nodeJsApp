@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 
  mongoose.connect('mongodb://localhost:27017/users', { useNewUrlParser: true }, function (err) {
   if (err) {
-    return console.log(err);
+    return console.error(err);
   }
   
-  app.listen(config.port, function () {
-    console.log('Сервер ожидает подключения...');
+  app.listen(config.port , function () {
+    console.log(`Port number is ${config.port}`);
   });
 });
 

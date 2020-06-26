@@ -1,0 +1,11 @@
+{
+  "development": {
+    "port": 3000,
+    "mongoConnection": "mongodb://localhost:27017/users",
+    "jwtSecret": "12345"
+  },
+  "production": {
+    "port": 3000,
+    "mongoConnection": "mongodb://localhost:27017/users"
+  }
+}

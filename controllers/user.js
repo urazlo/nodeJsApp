@@ -1,4 +1,4 @@
-const db = require('../models')
+const db = require('../models');
 
 async function getUsers(req, res) {
   try {
@@ -25,11 +25,13 @@ async function getUser(req, res) {
 
 async function createUser(req, res) {
   try {
-    const {
+    let {
       email,
       login,
       password
     } = req.body;
+
+    password = require('../utils/hash')(password, 'secretSolt');
     const newUser = await db.User.create({ email, login, password });
     res.json(newUser);
   }
@@ -55,11 +57,12 @@ async function deleteUser(req, res) {
 async function updateUser(req, res) {
   try {
     const { id } = req.params;
-    const {
+    let {
       email,
       login,
       password
     } = req.body;
+    password = require('../utils/hash')(password, 'secretSolt');
     const newUser = { email, login, password };
     const updatedUser = await db.User.findOneAndUpdate({ _id: id }, newUser);
     res.json(updatedUser);
