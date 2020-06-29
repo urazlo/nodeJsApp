@@ -1,8 +1,15 @@
 const db = require('../models');
+const hash = require('../utils/hash');
+const config = require('../config/defaultConfig.json');
 
 async function getUsers(req, res) {
   try {
     const users = await db.User.find({});
+
+    if (!users) {
+      return res.sendStatus(404);
+    }
+
     res.json(users);
   }
   catch (err) {
@@ -15,6 +22,11 @@ async function getUser(req, res) {
   try {
     const { id } = req.params;
     const user = await db.User.findOne({ _id: id });
+
+    if (!user) {
+      return res.sendStatus(404);
+    }
+
     res.json(user);
   }
   catch (err) {
@@ -31,7 +43,7 @@ async function createUser(req, res) {
       password
     } = req.body;
 
-    password = require('../utils/hash')(password, 'secretSolt');
+    password = hash(password, config.hashKey);
     const newUser = await db.User.create({ email, login, password });
     res.json(newUser);
   }
@@ -62,9 +74,14 @@ async function updateUser(req, res) {
       login,
       password
     } = req.body;
-    password = require('../utils/hash')(password, 'secretSolt');
+    password = hash(password, config.hashKey );
     const newUser = { email, login, password };
     const updatedUser = await db.User.findOneAndUpdate({ _id: id }, newUser);
+
+    if (!updatedUser) {
+      return res.sendStatus(404);
+    }
+
     res.json(updatedUser);
   }
   catch (err) {
@@ -73,4 +90,10 @@ async function updateUser(req, res) {
   }
 };
 
-module.exports = { getUsers, getUser, createUser, deleteUser, updateUser };
+module.exports = {
+  getUsers,
+  getUser,
+  createUser,
+  deleteUser,
+  updateUser
+};

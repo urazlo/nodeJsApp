@@ -4,7 +4,15 @@
   "dependencies": {
     "body-parser": "^1.18.0",
     "express": "^4.16.0",
+    "lodash": "^4.17.15",
     "mongodb": "^3.1.0",
-    "mongoose": "^5.9.19"
+    "mongoose": "^5.9.19",
+    "mongoose-update-if-current": "^1.4.0"
+  },
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }
