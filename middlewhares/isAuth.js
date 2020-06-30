@@ -7,14 +7,15 @@ module.exports = async (req, res, next) => {
     const token = (req.headers.authorization || '').substring(7);
 
     const { id } = jwt.verify(token, config.jwtSecret);
-
+    
     const user = await db.User.findOne({ _id: id });
-
+  
     if (!user) {
       return res.sendStatus(403);
     }
 
-    user = req.user;
+    req.user = user;
+    
     next();
   } catch (err) {
     if (err.message === 'jwt expired') {
