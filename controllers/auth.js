@@ -2,6 +2,7 @@ const db = require('../models');
 const createToken = require('../utils/createToken');
 const hash = require('../utils/hash');
 const validator = require('../utils/validator');
+const errorHandler = require('../utils/errorHandler');
 
 async function signIn(req, res) {
   try {
@@ -9,7 +10,7 @@ async function signIn(req, res) {
       login,
       password
     } = req.body;
-    
+
     let user = await db.User.findOne({ login });
 
     if (!user) {
@@ -23,19 +24,18 @@ async function signIn(req, res) {
     user = user.toJSON();
 
     delete user.password;
+    
     res.json({
       user,
       token: createToken({ id: user._id })
     })
   } catch (err) {
-    console.log(err);
-
     console.error(err);
     res.sendStatus(500);
   }
 };
 
- const signUp = async (req, res) => {
+const signUp = async (req, res) => {
   try {
     if (!req.body.password) {
       return res.sendStatus(400);
@@ -61,6 +61,12 @@ async function signIn(req, res) {
     })
   }
   catch (err) {
+    const message = errorHandler(err);
+
+    if (message) {
+      return res.status(400).send(message);
+    }
+
     console.error(err);
     res.sendStatus(500);
   }
@@ -68,13 +74,13 @@ async function signIn(req, res) {
 
 async function check(req, res) {
   try {
-
     const user = req.user.toJSON();
 
     delete user.password;
 
     res.json(user)
-  } catch (err) {
+  }
+  catch (err) {
     console.error(err);
     res.sendStatus(500);
   }
@@ -85,3 +91,5 @@ module.exports = {
   signUp,
   check
 };
+
+

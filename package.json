@@ -8,7 +8,9 @@
     "lodash": "^4.17.15",
     "mongodb": "^3.1.0",
     "mongoose": "^5.9.19",
-    "mongoose-update-if-current": "^1.4.0"
+    "mongoose-update-if-current": "^1.4.0",
+    "mongoose-validator": "^2.1.0",
+    "validator": "^13.1.1"
   },
   "scripts": {
     "start": "nodemon server.js"

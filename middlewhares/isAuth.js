@@ -19,10 +19,10 @@ module.exports = async (req, res, next) => {
     next();
   } catch (err) {
     if (err.message === 'jwt expired') {
-      return res.status(403).send('expired');
+      return res.status(403).send('Expired token');
     }
 
-    if (err.message === 'JsonWebTokenError') {
+    if (err.name === 'JsonWebTokenError') {
       return res.sendStatus(403);
     }
 
