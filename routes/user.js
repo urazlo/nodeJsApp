@@ -5,7 +5,6 @@ const isAuth = require('../middlewhares/isAuth');
 const isAdmin = require('../middlewhares/isAdmin');
 
 router.use(isAuth);
-router.use(isAdmin);
 
 router.get('/', isAdmin, userController.getUsers);
 
@@ -18,4 +17,3 @@ router.delete('/:id', userController.deleteUser);
 router.patch('/:id', userController.updateUser);
 
 module.exports = router;
-//добавить исключения для юзера
