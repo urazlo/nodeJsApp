@@ -58,7 +58,6 @@ async function createUser(req, res) {
     let newUser = await db.User.create({ email, login, password: hash(password) });
 
     newUser = newUser.toJSON();
-
     delete newUser.password;
 
     res.json(newUser);
@@ -79,9 +78,18 @@ async function deleteUser(req, res) {
   try {
     const { id } = req.params;
 
-    await db.User.findByIdAndDelete(id);
+    const existUser = await db.User.findById(id);
+    
+    if (!existUser) {
+      return res.sendStatus(400);
+    }
 
-    return res.status(204).send('Not found');
+    if (id !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.sendStatus(403);
+    }
+
+    await db.User.findByIdAndDelete(id);
+    res.sendStatus(204);
   }
   catch (err) {
     const message = errorHandler(err);
@@ -98,24 +106,29 @@ async function deleteUser(req, res) {
 async function updateUser(req, res) {
   try {
     const { id } = req.params;
+
     let {
       email,
       login,
-      password
+      password,
+      role
     } = req.body;
-    
+
+    if (id !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.sendStatus(403);
+    }
+
     let newUser = {};
 
-    if (!password) {
-      newUser = { email, login };
-    } else {
-      newUser = { email, login, password: hash(password) };
-
-      if (!validator.password(password)) {
-        return res.status(400).send('Invalid password');
-      }
+    if (password && !validator.password(password)) {
+      return res.status(400).send('Invalid password');
     }
-    
+
+    if (password) { newUser.password = hash(password); }
+    if (email) { newUser.email = email; }
+    if (login) { newUser.login = login; }
+    if (role && req.user.role === 'admin') { newUser.role = role; }
+
     let updatedUser = await db.User.findOneAndUpdate({ _id: id }, newUser);
 
     if (!updatedUser) {
@@ -123,7 +136,6 @@ async function updateUser(req, res) {
     }
 
     updatedUser = updatedUser.toJSON();
-
     delete updatedUser.password;
 
     res.json(updatedUser);
